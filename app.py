@@ -1,8 +1,11 @@
 from flask import Flask, request, jsonify
 import joblib
+import os
 
+# IMPORTANT: must be named 'application' for AWS
 application = Flask(__name__)
 
+# Load model
 model = joblib.load('sentiment_model.joblib')
 
 @application.route('/predict', methods=['POST'])
@@ -20,5 +23,9 @@ def predict():
         'sentiment_prediction': prediction
     })
 
+# Local run (also works for AWS with PORT)
 if __name__ == '__main__':
-    application.run()
+    application.run(
+        host='0.0.0.0',
+        port=int(os.environ.get("PORT", 5000))
+    )
